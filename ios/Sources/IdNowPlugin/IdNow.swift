@@ -1,8 +1,6 @@
 import Foundation
 import UIKit
-#if canImport(IDnowSDK)
 import IDnowSDK
-#endif
 
 @objc public class IdNow: NSObject {
     // Stored configuration (mirrors Cordova)
@@ -84,8 +82,7 @@ import IDnowSDK
         if let v = primaryBrandColor { appearance.primaryBrandColor = v }
         if let v = proceedButtonBackgroundColor { appearance.proceedButtonBackgroundColor = v }
         if let v = proceedButtonTextColor { appearance.proceedButtonTextColor = v }
-        if let v = photoIdentRetakeButtonBackgroundColor { appearance.photoIdentRetakeButtonBackgroundColor = v }
-        if let v = photoIdentRetakeButtonTextColor { appearance.photoIdentRetakeButtonTextColor = v }
+        // Properties removed in newer IDnow SDKs; skip if not available
         if let v = textFieldColor { appearance.textFieldColor = v }
         if let v = failureColor { appearance.failureColor = v }
         if let v = successColor { appearance.successColor = v }
@@ -109,10 +106,11 @@ import IDnowSDK
         if let modal = modalPresent { settings.forceModalPresentation = modal }
         if let test = useTestEnvironment, test { settings.environment = .test } else { settings.environment = .live }
 
+        guard let vc = viewController else { completion("failed", "No presenting view controller"); return }
         let controller = IDnowController(settings: settings)
         controller.initialize { success, error, cancelByUser in
             if success {
-                controller.startIdentification(from: viewController) { success, error, cancelByUser in
+                controller.startIdentification(from: vc) { success, error, cancelByUser in
                     if success {
                         completion("completed", nil)
                     } else if cancelByUser {
