@@ -12,7 +12,9 @@ Pod::Spec.new do |s|
   s.source = { :git => package['repository']['url'], :tag => s.version.to_s }
   s.source_files = 'ios/Sources/**/*.{swift,h,m,c,cc,mm,cpp}'
   s.ios.deployment_target = '14.0'
+  s.static_framework = true
   s.dependency 'Capacitor'
+  s.dependency 'AppCenter', '~> 2.0.1'
   s.dependency 'IDnowSDK', '~> 8.5.1'
   s.swift_version = '5.1'
 end
