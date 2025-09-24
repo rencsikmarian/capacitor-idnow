@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import AppCenter
 import IDnowSDK
 
 @objc public class IdNow: NSObject {
