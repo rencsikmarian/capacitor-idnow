@@ -12,9 +12,18 @@ Pod::Spec.new do |s|
   s.source = { :git => package['repository']['url'], :tag => s.version.to_s }
   s.source_files = 'ios/Sources/**/*.{swift,h,m,c,cc,mm,cpp}'
   s.ios.deployment_target = '14.0'
-  s.static_framework = true
   s.dependency 'Capacitor'
-  s.dependency 'AppCenter', '~> 2.0.1'
-  s.dependency 'IDnowSDK', '~> 8.5.1'
   s.swift_version = '5.1'
+  s.ios.vendored_frameworks = [
+    'ios/Frameworks/IDNowSDKCore.xcframework',
+    'ios/Frameworks/UnisseySdk.xcframework',
+    'ios/Frameworks/FaceTecSDK.xcframework'
+  ]
+  s.preserve_paths = [
+    'ios/Frameworks/IDNowSDKCore.xcframework',
+    'ios/Frameworks/UnisseySdk.xcframework',
+    'ios/Frameworks/FaceTecSDK.xcframework'
+  ]
+  s.frameworks = 'AVFoundation', 'WebKit', 'Accelerate', 'CoreMedia', 'CoreVideo', 'SystemConfiguration', 'Security'
+  s.static_framework = true
 end
