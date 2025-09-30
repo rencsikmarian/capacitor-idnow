@@ -1,75 +1,73 @@
 package com.capacitor.idnow;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
-import de.idnow.sdk.IDnowSDK;
+import de.idnow.core.IDnowConfig;
+import de.idnow.core.IDnowSDK;
 
 public class IdNow {
 
     private static final String TAG = "CapacitorIdNow";
 
-    private String companyId = "";
-    private boolean showVideoOverviewCheck = false;
-    private boolean showErrorSuccessScreen = false;
-    private boolean appGoogleRating = false;
-    private String language = "en"; // currently unused by legacy SDK usage
-    private boolean isTestEnvironment = false;
-
-    public void setCompanyId(String companyId) {
-        this.companyId = companyId != null ? companyId : "";
-    }
-
-    public void setShowVideoOverviewCheck(boolean value) {
-        this.showVideoOverviewCheck = value;
-    }
-
-    public void setShowErrorSuccessScreen(boolean value) {
-        this.showErrorSuccessScreen = value;
-    }
-
-    public void setAppGoogleRating(boolean value) {
-        this.appGoogleRating = value;
-    }
+    private String language = null;
 
     public void setIdNowLanguage(String language) {
-        this.language = language != null ? language : "en";
+        this.language = language;
     }
 
-    public void isTestEnvironment(boolean value) {
-        this.isTestEnvironment = value;
+    public interface ResultCallback {
+        void onResult(String status, String message);
     }
 
     public void startIdNowSdk(Activity activity, String token) {
+        startIdNowSdk(activity, token, null);
+    }
+
+    public void startIdNowSdk(Activity activity, String token, ResultCallback callback) {
         if (activity == null) {
             Log.e(TAG, "Activity is null");
-            return;
-        }
-        if (companyId == null || companyId.isEmpty()) {
-            Log.e(TAG, "Company ID is empty");
+            if (callback != null) callback.onResult("failed", "Missing activity");
             return;
         }
         if (token == null || token.isEmpty()) {
             Log.e(TAG, "Token is empty");
+            if (callback != null) callback.onResult("failed", "Missing token");
             return;
         }
 
         try {
-            Context context = activity.getApplicationContext();
-            IDnowSDK.getInstance().initialize(activity, companyId);
-            IDnowSDK.setShowVideoOverviewCheck(showVideoOverviewCheck, context);
-            IDnowSDK.setShowErrorSuccessScreen(showErrorSuccessScreen, context);
-            IDnowSDK.setApp_GoogleRating(appGoogleRating);
-            IDnowSDK.setEnvironment(IDnowSDK.Server.LIVE);
-            if (isTestEnvironment) {
-                IDnowSDK.setEnvironment(IDnowSDK.Server.TEST);
+            IDnowConfig.Builder builder = IDnowConfig.Builder.getInstance();
+            if (language != null && !language.isEmpty()) {
+                builder = builder.withLanguage(language);
             }
-            IDnowSDK.getInstance().start(token);
-            // Optionally reset theme as in Cordova
-            IDnowSDK.getInstance().getAppContext().setTheme(0);
+            IDnowConfig config = builder.build();
+
+            IDnowSDK sdk = IDnowSDK.getInstance();
+            sdk.initialize(activity, config);
+            // Note: company id is not required in v5 AutoIdent flow; ident token is used
+            sdk.startIdent(token, new IDnowSDK.IDnowResultListener() {
+                @Override
+                public void onIdentResult(IDnowResult result) {
+                    Log.d(TAG, "IDnow result: " + result.getResultType());
+                    if (callback == null) return;
+                    switch (result.getResultType()) {
+                        case FINISHED:
+                            callback.onResult("completed", null);
+                            break;
+                        case CANCELLED:
+                            callback.onResult("cancelled", result.getStatusCode());
+                            break;
+                        case ERROR:
+                        default:
+                            callback.onResult("failed", result.getStatusCode());
+                            break;
+                    }
+                }
+            });
         } catch (Exception e) {
             Log.e(TAG, "Error starting IDnow SDK", e);
+            if (callback != null) callback.onResult("failed", e.getMessage());
         }
     }
 }
