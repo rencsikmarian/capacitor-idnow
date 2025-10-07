@@ -5,14 +5,15 @@ import IDNowSDKCore
 #endif
 
 @objc public class IdNow: NSObject {
-    
+
     @objc public func startIdNowSdk(token: String, language: String?, from viewController: UIViewController?, completion: @escaping (_ status: String, _ errorMessage: String?) -> Void) {
-#if canImport(IDNowSDKCore)
+        #if canImport(IDNowSDKCore)
         guard !token.isEmpty else { completion("failed", "Token is required"); return }
         guard let vc = viewController else { completion("failed", "No presenting view controller"); return }
 
         let preferred = (language?.isEmpty == false) ? language! : "en"
         IDNowSDK.shared.start(token: token, preferredLanguage: preferred, fromViewController: vc) { (result: IDNowSDK.IdentResult.type, statusCode: IDNowSDK.IdentResult.statusCode, message: String) in
+            print("IDNowSDK result: \(result), statusCode: \(statusCode), message: \(message)")
             if result == .ERROR {
                 let errorText = message.isEmpty ? String(describing: statusCode) : message
                 completion("failed", errorText)
@@ -22,8 +23,8 @@ import IDNowSDKCore
                 completion("cancelled", nil)
             }
         }
-#else
+        #else
         completion("failed", "IDNowSDKCore not available in build environment. Ensure the framework is integrated and run via workspace.")
-#endif
+        #endif
     }
 }

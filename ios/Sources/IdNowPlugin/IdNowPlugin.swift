@@ -12,7 +12,6 @@ public class IdNowPlugin: CAPPlugin, CAPBridgedPlugin {
 
     private let implementation = IdNow()
 
-
     @objc public func startIdNowSdk(_ call: CAPPluginCall) {
         guard let token = call.getString("token"), !token.isEmpty else { call.reject("token is required"); return }
         let language = call.getString("language")

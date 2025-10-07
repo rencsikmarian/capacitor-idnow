@@ -1,4 +1,5 @@
 import { WebPlugin } from '@capacitor/core';
+
 import type { IdNowPlugin, StartResult } from './definitions';
 
 export class IdNowWeb extends WebPlugin implements IdNowPlugin {

@@ -14,7 +14,10 @@ public class IdNowPlugin extends Plugin {
     @PluginMethod
     public void startIdNowSdk(PluginCall call) {
         String token = call.getString("token");
-        if (token == null || token.isEmpty()) { call.reject("token is required"); return; }
+        if (token == null || token.isEmpty()) {
+            call.reject("token is required");
+            return;
+        }
         String language = call.getString("language");
         if (language != null && !language.isEmpty()) {
             implementation.setIdNowLanguage(language);

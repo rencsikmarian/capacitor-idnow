@@ -2,7 +2,6 @@ package com.capacitor.idnow;
 
 import android.app.Activity;
 import android.util.Log;
-
 import de.idnow.core.IDnowConfig;
 import de.idnow.core.IDnowSDK;
 
@@ -46,25 +45,28 @@ public class IdNow {
             IDnowSDK sdk = IDnowSDK.getInstance();
             sdk.initialize(activity, config);
             // Note: company id is not required in v5 AutoIdent flow; ident token is used
-            sdk.startIdent(token, new IDnowSDK.IDnowResultListener() {
-                @Override
-                public void onIdentResult(IDnowResult result) {
-                    Log.d(TAG, "IDnow result: " + result.getResultType());
-                    if (callback == null) return;
-                    switch (result.getResultType()) {
-                        case FINISHED:
-                            callback.onResult("completed", null);
-                            break;
-                        case CANCELLED:
-                            callback.onResult("cancelled", result.getStatusCode());
-                            break;
-                        case ERROR:
-                        default:
-                            callback.onResult("failed", result.getStatusCode());
-                            break;
+            sdk.startIdent(
+                token,
+                new IDnowSDK.IDnowResultListener() {
+                    @Override
+                    public void onIdentResult(IDnowResult result) {
+                        Log.d(TAG, "IDnow result: " + result.getResultType());
+                        if (callback == null) return;
+                        switch (result.getResultType()) {
+                            case FINISHED:
+                                callback.onResult("completed", null);
+                                break;
+                            case CANCELLED:
+                                callback.onResult("cancelled", result.getStatusCode());
+                                break;
+                            case ERROR:
+                            default:
+                                callback.onResult("failed", result.getStatusCode());
+                                break;
+                        }
                     }
                 }
-            });
+            );
         } catch (Exception e) {
             Log.e(TAG, "Error starting IDnow SDK", e);
             if (callback != null) callback.onResult("failed", e.getMessage());
