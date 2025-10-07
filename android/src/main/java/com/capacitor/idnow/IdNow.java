@@ -3,6 +3,7 @@ package com.capacitor.idnow;
 import android.app.Activity;
 import android.util.Log;
 import de.idnow.core.IDnowConfig;
+import de.idnow.core.IDnowResult;
 import de.idnow.core.IDnowSDK;
 
 public class IdNow {
