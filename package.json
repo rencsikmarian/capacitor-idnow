@@ -9,6 +9,7 @@
   "files": [
     "android/src/main/",
     "android/build.gradle",
+    "android/libs",
     "dist/",
     "ios/Frameworks",
     "ios/Sources",

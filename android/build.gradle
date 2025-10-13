@@ -66,8 +66,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':capacitor-android')
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
-    // IDnow AutoIdent SDK (modern API)
-    implementation 'de.idnow.android.sdk:idnow-platform:5.14.1'
+    // IDnow AutoIdent SDK (local AAR from android/lib)
+    implementation(name: 'idnow-platform-no-fintec-XS2A-5.15.0', ext: 'aar')
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
